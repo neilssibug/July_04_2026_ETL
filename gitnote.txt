@@ -77,6 +77,11 @@ DO NOT initialize with README (since you already have one)
 Copy your repo URL (example below):
 
 git remote add origin https://github.com/your-username/my-project.git
+
+if existing set new URL
+
+git remote set-url origin <new-repo-url>
+
 🚀 7. Push to GitHub
 
 First, rename branch to main (important fix for your earlier error):
