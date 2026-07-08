@@ -29,27 +29,73 @@ output_path = os.getenv("OUTPUT_DATA_PATH")
 url = os.getenv("API_URL")
 
 def extract_from_api(url:str, path:str) -> pd.DataFrame:
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response. json()
-            # print(json.dumps(data, indent=2)[:500])
+    # try:
+    #     response = requests.get(url, timeout=10)
+    #     if response.status_code == 200:
+    #         data = response. json()
+    #         # print(json.dumps(data, indent=2)[:500])
         
+    #         raw_file = f"{path}data.json"
+    #         with open(f"{raw_file}", "w") as f:
+    #             json.dump(data, f, indent=2)
+    #         print(f"Save RAW JSON to {raw_file}")
+
+    #         df = pd.json_normalize(data)
+
+    #         return df
+    #     else:
+    #         print(f"Request failed with status: {response.status_code}")
+    # except requests.RequestException as exc:
+    #     print(f"Network error: {exc}")
+
+    all_rows = []
+    page = 1
+    print("fetching data ... ")
+    while True:
+        try:
+            res = requests.get(url, params={"page": page, "limit": 10}, timeout=30)
+            res.raise_for_status()
+            payload = res.json()
+            rows = payload.get("items", [])
+            if not rows:
+                print("no more rows to fetch, exiting loop.")
+                break
+
+            all_rows.extend(rows)
+            print("successfully fetched page", page, "with", len(rows), "rows.")
+            
+            characters = [row.get("name") for row in rows]
+            # print("character names:", characters)
+            # print(rows)
+
+            next_page = payload.get("links", {}).get("next","")
+            if not next_page:
+                print("no next page link found, exiting loop.")
+                break
+
+            page += 1                
+
+        except requests.RequestException as exc:
+            print(f"Error fetching data from page {page}: {exc}")
+            break
+
+    print("---------")
+    print("Total rows fetched:", len(all_rows))
+
+    if all_rows:
+        try:
             raw_file = f"{path}data.json"
             with open(f"{raw_file}", "w") as f:
-                json.dump(data, f, indent=2)
+                json.dump(all_rows, f, indent=2)
             print(f"Save RAW JSON to {raw_file}")
+        except IOError as e:
+            print(f"Error saving data to file: {e}")
 
-            df = pd.json_normalize(data)
-
-            return df
-        else:
-            print(f"Request failed with status: {response.status_code}")
-    except requests.RequestException as exc:
-        print(f"Network error: {exc}")
+    df = pd.json_normalize(all_rows)
+    return df
 
 df_raw = extract_from_api(url, raw_path)
-
+# print(df_raw.columns)
  
 def transform_raw_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
@@ -61,11 +107,11 @@ def transform_raw_data(df: pd.DataFrame) -> pd.DataFrame:
     # df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
     # df["updated_at"] = pd.to_datetime(df["updated_at"], errors="coerce")
 
-    df_exploded = df.explode("items")
-    df_items = pd.json_normalize(df_exploded["items"])
-    # df = df_items
-
-    return df_items 
+    # df_exploded = df.explode("items")
+    # df_items = pd.json_normalize(df_exploded["items"])
+    # # df = df_items
+    
+    return df
 
 df_cleaned = transform_raw_data(df_raw).sort_values("id").drop_duplicates("id", keep="last")
 # print(df_cleaned.columns)
@@ -78,7 +124,7 @@ if engine:
         df_delta = df_cleaned
 
         rows_to_load = len(df_delta)
-        print(rows_to_load)
+        # print(rows_to_load)
         if rows_to_load > 0:
             # print(f"{output_path}")
             output_file = f"{output_path}data_cleaned.csv"
