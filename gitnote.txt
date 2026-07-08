@@ -64,6 +64,7 @@ Add files to staging:
 git add .
 💾 4. Commit
 git commit -m "Initial commit"
+
 🌐 5. Create a GitHub Repo
 
 Go to GitHub and create a new repository:
