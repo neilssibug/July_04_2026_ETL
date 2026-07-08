@@ -1,0 +1,90 @@
+Typical Team Workflow
+Clone repo
+Create branch
+Make changes
+Commit changes
+Push branch
+Open Pull Request
+Review & merge
+
+================================================
+
+git clone https://github.com/username/repo.git
+
+git clone https://github.com/neilssibug/phase2_project.git
+
+git remote add origin https://github.com/neilssibug/phase2_project.git
+================================================
+
+mkdir myproject
+cd myproject
+
+git init
+
+echo "Hello Git" > readme.txt
+
+git add .
+git commit -m "first commit"
+
+================================================
+
+mkdir [directory_name]
+cd [directory_name]
+
+git init
+
+git add .
+git commit -m "remarks on the folder project"
+
+git pull origin main --rebase
+
+git push -u origin main 
+
+
+ssh-keygen -t rsa -b 4096 -C "neilssibug@gmail.com"
+
+
+================================================
+Here’s a simple step-by-step guide to create a local Git repo and push it to GitHub:
+
+🧱 1. Create a Local Directory
+mkdir my-project
+cd my-project
+🔧 2. Initialize Git
+git init
+
+📄 3. Add Files
+
+Create a file (example: README.md):
+
+echo "# My Project" > README.md
+
+Add files to staging:
+
+git add .
+💾 4. Commit
+git commit -m "Initial commit"
+🌐 5. Create a GitHub Repo
+
+Go to GitHub and create a new repository:
+
+Open 👉 GitHub New Repository Page
+Give it a name (e.g., my-project)
+DO NOT initialize with README (since you already have one)
+🔗 6. Connect Local Repo to GitHub
+
+Copy your repo URL (example below):
+
+git remote add origin https://github.com/your-username/my-project.git
+🚀 7. Push to GitHub
+
+First, rename branch to main (important fix for your earlier error):
+
+git branch -M main
+
+Then push:
+
+git push -u origin main
+✅ Done!
+
+Your project is now on GitHub 🎉

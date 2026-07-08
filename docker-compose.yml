@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: bootcamp_dw_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bootcamp_dw
+      POSTGRES_USER: bootcamp_admin
+      POSTGRES_PASSWORD: bootcamp_pw
+    ports:
+      - "5431:5432"
+    volumes:
+      - bootcamp_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bootcamp_dw_network
+
+  pgadmin: 
+    image: dpage/pgadmin4
+    container_name: bootcamp_dw_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: neilssibug@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - bootcamp_dw_network
+
+volumes:
+  bootcamp_postgres_data:
+
+networks:
+  bootcamp_dw_network:
+    driver: bridge

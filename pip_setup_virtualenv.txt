@@ -1,0 +1,7 @@
+pip list
+	need to see there is "virtualenv"
+	
+pip install virtualenv
+
+virtualenv venv
+
